@@ -11,32 +11,53 @@ public:
 		, _n(n)
 	{
 		size_t index = 0;
-		for (size_t i = 0; i < n; ++i)
+		for (size_t i = 0; i < n; i++)
 		{
-			for (size_t j = 0; j < n; ++j)
+			for (size_t j = 0; j < n; j++)
 			{
-				if (i >= j)  //上三角
+				//if (i >= j)  //下三角
+				//{
+				//	_array[index++] = a[i*n+j];
+				//}
+
+				if (j >= i)    //上三角
 				{
 					_array[index++] = a[i*n+j];
 				}
 				else
 				{
-					break;
+					continue;
 				}
 			}
 		}
 	}
 
+	int fun(int num)
+	{
+		int res = 0;
+		for (int i = 1; i <= num; i++)
+		{
+			res = res + i;
+		}
+
+		return res;
+	}
+
 	void Display()
 	{
-		for (size_t i = 0; i < _n; ++i)
+		for (size_t i = 0; i < _n; i++)
 		{
-			for (size_t j = 0; j < _n; ++j)
+			for (size_t j = 0; j < _n; j++)
 			{
-				if (i >= j)
+				/*if (i >= j)
 					cout << _array[i*(i + 1) / 2 + j] << " ";
+					else
+					cout << _array[j*(j + 1) / 2 + i] << " ";*/
+
+				if (j >= i)
+					cout << _array[i*_n+j-fun(i)] << " ";
 				else
-					cout << _array[j*(j + 1) / 2 + i] << " ";
+					cout << _array[j*_n+i-fun(j)] << " ";
 			}
 			cout << endl;
 		}
@@ -68,7 +89,6 @@ void Test()
 		{ 4, 3, 2, 1, 0 },
 	};
 
-	SymmetricMatrix<int> sy((int*)a,5);
+	SymmetricMatrix<int> sy((int*)a, 5);
 	sy.Display();
-
 }
