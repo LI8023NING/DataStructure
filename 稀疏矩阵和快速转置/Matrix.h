@@ -1,6 +1,7 @@
 #pragma once
 #include<vector>
 
+
 //¶Ô³Æ¾ØÕóµÄÑ¹Ëõ´æ´¢
 template<class T>
 class  SymmetricMatrix
@@ -89,6 +90,6 @@ void Test()
 		{ 4, 3, 2, 1, 0 },
 	};
 
-	SymmetricMatrix<int> sy((int*)a, 5);
+	SymmetricMatrix<int> sy((int*)a,5);
 	sy.Display();
 }
