@@ -68,7 +68,7 @@ public:
 		cout<<endl;
 	}
 
-	//系数矩阵的一般转置
+	//稀疏矩阵的一般转置
 	SparseMatrix<T> Transpose()
 	{
 		SparseMatrix<T> sm;
@@ -99,26 +99,30 @@ public:
 	}
 
 	// O(有效数据个数+colsize)
-	//系数矩阵快速转置
+	//稀疏矩阵快速转置
 	SparseMatrix<T> FastTranspose()
 	{
 		SparseMatrix<T> sm;
-		sm._colSize = _rowSize;
-		sm._rowSize = _colSize;
+		sm._colSize = _rowSize;   //装置后的列是前面的行
+		sm._rowSize = _colSize;   //装置后的行是前面的列
 		sm._invalid = _invalid;
 
-		int* rowCounts = new int[_colSize];
-		int* rowStart = new int[_colSize];
-		memset(rowCounts, 0, sizeof(int)*_colSize);
-		memset(rowStart, 0, sizeof(int)*_colSize);
+		int* rowCounts = new int[_colSize];  //用来统计转置后矩阵每行有效数据个数，也就是
+		                                     //转置前没列的有效数据个数，大小当然是列数
+		int* rowStart = new int[_colSize];   //转置后的矩阵每行在压缩矩阵中的存储起始位置
 
+		memset(rowCounts, 0, sizeof(int)*_colSize);
+		memset(rowStart, 0, sizeof(int)*_colSize);   //初始化
+
+		//统计行数据个数
 		size_t index = 0;
 		while (index < _array.size())
 		{
-			rowCounts[_array[index]._col]++;
+			rowCounts[_array[index]._col]++;  //按转之前的列号统计，就是转置后的每行的数据个数
 			++index;
 		}
 
+		//行开始位置
 		rowStart[0] = 0;
 		for (int i = 1; i < _colSize; ++i)
 		{
@@ -156,7 +160,7 @@ private:
 	vector<Trituple<T>> _array;   //Vector中装的是三元组
 	size_t _rowSize;              //行大小
 	size_t _colSize;              //列大小
-	T _invalid;	                  //
+	T _invalid;	                  //矩阵中非法元素
 };
 
 void Test2()
