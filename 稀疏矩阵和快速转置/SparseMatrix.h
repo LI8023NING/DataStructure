@@ -98,6 +98,57 @@ public:
 		return sm;
 	}
 
+	// O(有效数据个数+colsize)
+	//系数矩阵快速转置
+	SparseMatrix<T> FastTranspose()
+	{
+		SparseMatrix<T> sm;
+		sm._colSize = _rowSize;
+		sm._rowSize = _colSize;
+		sm._invalid = _invalid;
+
+		int* rowCounts = new int[_colSize];
+		int* rowStart = new int[_colSize];
+		memset(rowCounts, 0, sizeof(int)*_colSize);
+		memset(rowStart, 0, sizeof(int)*_colSize);
+
+		size_t index = 0;
+		while (index < _array.size())
+		{
+			rowCounts[_array[index]._col]++;
+			++index;
+		}
+
+		rowStart[0] = 0;
+		for (int i = 1; i < _colSize; ++i)
+		{
+			rowStart[i] = rowStart[i - 1] + rowCounts[i - 1];
+		}
+
+		// 借助rowStart定位转置后压缩存储的位置
+		index = 0;
+		sm._array.resize(_array.size());
+		while (index < _array.size())
+		{
+			size_t begin = rowStart[_array[index]._col];
+			Trituple<T> t;
+			t._col = _array[index]._row;
+			t._row = _array[index]._col;
+			t._value = _array[index]._value;
+
+			sm._array[begin] = t;
+
+			++rowStart[_array[index]._col];
+			++index;
+		}
+
+		delete[] rowCounts;
+		delete[] rowStart;
+
+		return sm;
+	}
+
+
 private:
 	//Trituple* _array;	// 压缩存储
 	//size_t _size;		// 稀疏矩阵的有效数据的个数
@@ -123,6 +174,6 @@ void Test2()
 	SparseMatrix<int> sm1((int*)a, 6, 5, 0);
 	sm1.Display();
 
-	SparseMatrix<int> sm2 = sm1.Transpose();
+	SparseMatrix<int> sm2 = sm1.FastTranspose();
 	sm2.Display();
 }
