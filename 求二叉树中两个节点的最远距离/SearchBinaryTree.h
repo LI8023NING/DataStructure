@@ -130,6 +130,33 @@ public:
 		return max_len;
 	}
 
+	//二  //几乎相同
+	int longestPath(Node* root)
+	{
+		int left_len, right_len, max_len;
+		longestPathUtil(root, left_len, right_len, max_len);
+		return max_len;
+	}
+
+	void longestPathUtil(Node* root, int& left_len, int& right_len, int& max_len)
+	{
+		if (root == NULL)
+		{
+			left_len = 0;
+			right_len = 0;
+			max_len = 0;
+			return;
+		}
+
+		int left_len1, right_len1, left_len2, right_len2;
+		longestPathUtil(root->left, left_len1, right_len1, max_len);
+		longestPathUtil(root->right, left_len2, right_len2, max_len);
+
+		left_len = 1 + max(left_len1, right_len1);
+		right_len = 1 + max(left_len2, right_len2);
+		max_len = max(left_len + right_len - 1, max_len);
+	}
+
 public:
 	SBTNode<K, V> *_root;
 };
