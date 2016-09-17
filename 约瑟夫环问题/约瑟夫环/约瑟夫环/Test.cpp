@@ -1,4 +1,4 @@
-#include"SeqList.h"
+ #include"SeqList.h"
 
 /*
 **Ë¼Â·£º
