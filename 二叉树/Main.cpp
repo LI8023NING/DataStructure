@@ -3,8 +3,8 @@
 void Test()
 {
 	BinaryTreeNode<int>* _root = NULL;
-	int a[7] = {1,2,'#','#',3,'#','#'};
-	BinaryTree<int> s1(a,10);
+	int a[11] = { 1, 2, 3, '#', '#','#',4,'#',5,'#','#'};
+	BinaryTree<int> s1(a,11);
 	cout<<"先序遍历"<<endl;
 	s1.PrveOrder(s1._root);
 	cout<<endl;
@@ -16,12 +16,18 @@ void Test()
 	cout<<endl;
 	cout<<"层序遍历"<<endl;
 	s1.LevelOrder(s1._root);
+	cout << endl;
+	cout << "非递归前序遍历" << endl;
+	s1.PrevOrder_NonR();
+	cout << endl;
+	cout <<"非递归后序遍历"<< endl;
+	s1.PostOrder_NonR();
 	cout<<endl;
 	int size = 0;
 	//cout<<"Size:"<<s1.Size(s1._root,size)<<endl;
 	cout<<"Depth:"<<s1.Depth(s1._root)<<endl;
 	
-	cout<<"Find:"<<s1.Find(s1._root,1)<<endl;
+	cout<<"Find:"<<s1.Find(s1._root,7)<<endl;
 	cout<<"大小："<<s1.GetNodeNum(s1._root)<<endl;
 
 	cout<<"第K层的节点数："<<s1.GetNodeNumKthLevel(s1._root,2)<<endl;
@@ -39,7 +45,7 @@ void Test1()
 
 int main()
 {
-	//Test();
-	Test1();
+	Test();
+	//Test1();
 	return 0;
 }

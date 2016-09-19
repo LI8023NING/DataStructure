@@ -70,7 +70,8 @@ public:
 	{
 		if(this != &x)
 		{
-			swap(_root,x._root);
+			BinaryTree<T> tmp(x);
+			swap(_root,tmp._root);
 		}
 		return *this;
 	}
@@ -99,24 +100,15 @@ public:
 		{
 			return NULL;
 		}
-		else if(root->_data == x)
+
+		if(root->_data == x)
 		{
 			return root;
 		}
-		else
-		{
-			BinaryTreeNode<T>* tem =Find(root->_left,x);
 
-			if(tem)
-			{
-				return tem;
-			}
-			else 
-			{
-				return Find(root->_right,x);
-			}
-		}
+		Find(root->_left,x);
 
+		Find(root->_right,x);
 	}
 
 	//大小
@@ -172,30 +164,24 @@ public:
 	void LevelOrder(BinaryTreeNode<T>* root)
 	{
 		queue<BinaryTreeNode<T>*> q;
-	
+
 		if (root == nullptr)
-		{
 			return;
-		}
+
 		q.push(root);
 		while (!q.empty())
 		{
 			BinaryTreeNode<T>* node = q.front();
-	
 			cout << node->_data << " ";
 			q.pop();
+
 			if (node->_left != nullptr)
-			{
 				q.push(node->_left);
-			}
 
 			if (node->_right != nullptr)
-			{
 				q.push(node->_right);
-			}
 		}
 	}
-
 	//前序遍历
 	void PrveOrder(BinaryTreeNode<T>* root)
 	{
@@ -251,22 +237,22 @@ public:
 	void PrevOrder_NonR()
 	{
 		stack<BinaryTreeNode<T>*> s; //栈里边全是指针
-		if (_root != NULL)
+
+		BinaryTreeNode<T> *p = _root;
+		while (p || !s.empty())
 		{
-			s.push(_root)  //头不空 头入栈
-		}
-		while (!s.empty())
-		{
-			BinaryTreeNode<T>* top = s.top();//取栈顶
-			s.pop();                         //出栈
-			cout << top->_data << " ";
-			if (_root->_left)              //左右访问
+			while (p != nullptr)  //左路一次打印完成
 			{
-				s.push(_root->_left);
+				cout << p->_data << " ";
+				s.push(p);
+				p = p->_left;
 			}
-			if (_root->_right)
+
+			if (!s.empty())
 			{
-				s.push(_root->_right);
+				p = s.top();
+				s.pop();
+				p = p->_right;
 			}
 		}
 		cout << endl;
@@ -287,12 +273,12 @@ public:
 			}
 
 			//中序遍历 现在访问左 在到右边
-			while (!s.empty())
+			if(!s.empty())
 			{
-				BinaryTreeNode<T>* top = s.top();
+				cur = s.top();
 				s.pop();
-				cout << top->_data << " ";
-				cur = top->_right; //走右边
+				cout << cur->_data << " ";
+				cur = cur->_right; //走右边
 			}
 		}
 	}
@@ -301,30 +287,110 @@ public:
 	void PostOrder_NonR()
 	{
 		stack<BinaryTreeNode<T>*> s;
-		BinaryTreeNode<T>* cur = _root;
+		BinaryTreeNode<T>* cur = nullptr;
 		BinaryTreeNode<T>* prevVisted = NULL;
 
-		while (cur || !s.empty())
+		s.push(_root);
+		while (!s.empty())
 		{
-			while (cur)
+			cur = s.top();
+			if ((cur->_left == NULL && cur->_right == NULL) ||
+				((prevVisted != NULL) && (prevVisted == cur->_left || prevVisted == cur->_right)))
 			{
-				s.push(cur);
-				cur = cur->_left;
+				cout << cur->_data << " ";  //如果当前结点没有孩子结点或者孩子节点都已被访问过 
+				s.pop();
+				prevVisted = cur;
 			}
 
-			BinaryTreeNode<T>* top = s.top();
-			if (top->_right == NULL || top->_right = prevVisted)
-			{
-				cout << top->_data << " ";
-				prevVisted = top;
-				s.pop();
-			}
 			else
 			{
-				cur = top->_right;
+				if (cur->_right != NULL)
+					s.push(cur->_right);
+				if (cur->_left != NULL)
+					s.push(cur->_left);
 			}
 		}
+
+
+	
 		cout << endl;
+	}
+
+	//深度优先遍历
+	//因此可以借助堆栈的数据结构，由于堆栈是后进先出的顺序，
+	//由此可以先将右子树压栈，然后再对左子树压栈，
+	//这样一来，左子树结点就存在了栈顶上，因此某结点的左子树能在它的右子树遍历之前被遍历。
+	void depthFirstSearch(Node* root)
+	{
+		stack<Node*> TreeNode;
+		TreeNode.push(root);        //根节点入栈
+		Node* node = nullptr;
+		while (!TreeNode.empty())
+		{
+			node = TreeNode.top();
+			cout << node->key << " "; //访问
+			TreeNode.pop();
+
+			if (node->_right)         //右子树先入栈
+				TreeNode.push(node->_right);
+
+			if (node->_left)          //左子树再入栈
+				TreeNode.push(node->_left);
+		}
+	}
+
+	//广度优先搜索
+	//是从根节点开始，沿着树的宽度遍历树的节点。如果所有节点均被访问，则算法中止。
+	//类似层序遍历，需要借助队列
+	//广度优先遍历
+	void breadthFirstSearch(Node* root)
+	{
+		if (root == nullptr)
+			return;
+
+		queue<Node*> TreeNode;
+		Node* node = nullptr;
+
+		TreeNode.push(root);
+		while (!TreeNode.empty())
+		{
+			node = TreeNode.front();
+			cout << node->key << " ";
+			TreeNode.pop();
+
+			if (node->_left)             //先左再右，一次性入队，在从头出队，一层层遍历
+				TreeNode.push(node->_left);
+			if (node->_right)
+				TreeNode.push(node->_right);
+		}
+	}
+
+	
+	//树中最远两个节点间的距离
+#define max(a, b) ((a) > (b) ? (a) : (b))
+	int find_max_len(Node *t)
+	{
+		if (t == NULL)
+		{
+			return 0;
+		}
+
+		int left_max_len = find_max_len(t->_left);
+		int right_max_len = find_max_len(t->_right);
+
+		if (t->_left) {
+			t->left_height = 1 + max(t->_left->left_height, t->_left->right_height);
+
+		}
+		if (t->_right) {
+			t->right_height = 1 + max(t->_right->left_height, t->_right->right_height);
+
+		}
+
+		int max_len = max(left_max_len, right_max_len);
+		max_len = max(max_len, t->left_height + t->right_height);
+
+		return max_len;
 	}
 
 	//清除
